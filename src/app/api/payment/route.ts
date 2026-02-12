@@ -52,8 +52,8 @@ export async function POST(req: Request) {
         const paymentData = {
             amount: Number(String(amount).replace(',', '.')),
             email,
-            whatsapp,
-            phone: whatsapp,
+            whatsapp: whatsapp || '',
+            phone: whatsapp || '',
             planName: description,
             status: 'pending',
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -62,11 +62,14 @@ export async function POST(req: Request) {
             copyPaste: pixData.qr_code || ''
         };
 
-        // Salvar na coleção 'leads' que é a que o dashboard original usa
-        await db.collection('leads').doc(normalizedId).set(paymentData);
+        // Salvar na coleção 'payments' que é a que o DASHBOARD NOVO usa
+        await db.collection('payments').doc(normalizedId).set(paymentData);
 
-        // Backup em 'payments' só por segurança
-        await db.collection('payments').doc(normalizedId).set(paymentData).catch(() => { });
+        // Backup em 'leads' e 'sales' para garantir sincronia total
+        await Promise.all([
+            db.collection('leads').doc(normalizedId).set(paymentData).catch(() => { }),
+            db.collection('sales').doc(normalizedId).set(paymentData).catch(() => { })
+        ]);
 
         // Send "Pending Payment" email if possible
         if (pixData.qr_code_base64 && pixData.qr_code_base64.length > 100) {

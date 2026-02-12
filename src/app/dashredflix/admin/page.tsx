@@ -230,6 +230,9 @@ export default function AdminDashboard() {
         localStorage.removeItem('redflix_admin_session');
     };
 
+    const [dateFilter, setDateFilter] = useState<'today' | 'week' | 'month' | 'all'>('all'); // Mudei para 'all' por padrão para não esconder nada
+    const [searchQuery, setSearchQuery] = useState('');
+
     // --- Computed Metrics (KPIs) ---
     const metrics = useMemo(() => {
         const now = new Date();
@@ -243,8 +246,12 @@ export default function AdminDashboard() {
 
         // Filter by Date
         const dateFiltered = leads.filter(l => {
+            if (dateFilter === 'all') return true;
             if (!l.createdAt) return false;
-            const d = l.createdAt.toDate();
+
+            // Garantir que temos um objeto Date válido do Firestore
+            const d = typeof l.createdAt.toDate === 'function' ? l.createdAt.toDate() : new Date(l.createdAt.seconds * 1000);
+
             if (dateFilter === 'today') return d >= startOfDay;
             if (dateFilter === 'week') return d >= startOfWeek;
             if (dateFilter === 'month') return d >= startOfMonth;
