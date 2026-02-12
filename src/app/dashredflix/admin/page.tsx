@@ -85,32 +85,53 @@ export default function AdminDashboard() {
     const [discount, setDiscount] = useState(0);
 
     // Pix Generator State
+    const [pixMode, setPixMode] = useState<'anonymous' | 'withData'>('anonymous');
     const [pixAmount, setPixAmount] = useState('');
-    const [pixKey, setPixKey] = useState('');
-    const [pixName, setPixName] = useState('RedFlix Shop');
-    const [pixCity, setPixCity] = useState('Sao Paulo');
+    const [pixEmail, setPixEmail] = useState('');
+    const [pixPhone, setPixPhone] = useState('');
+    const [pixName, setPixName] = useState('Cliente VIP');
     const [generatedPixString, setGeneratedPixString] = useState('');
     const [generatedPixImage, setGeneratedPixImage] = useState('');
     const [pixLoading, setPixLoading] = useState(false);
+    const [pixSuccess, setPixSuccess] = useState(false);
+    const [pixTxId, setPixTxId] = useState('');
 
-    // Generate Pix Handler
+    // Generate Pix Handler (Two Modes)
     const handleGeneratePixCode = async () => {
         if (!pixAmount) return alert('Preencha o valor da cobrança.');
+
+        // Validate email/phone if mode is 'withData'
+        if (pixMode === 'withData') {
+            if (!pixEmail || !pixPhone) {
+                return alert('Preencha email e telefone para gerar Pix com dados.');
+            }
+        }
+
         setPixLoading(true);
 
         try {
+            // Use fictitious data for anonymous mode
+            const email = pixMode === 'anonymous' ? 'anonimo@redflix.com' : pixEmail;
+            const whatsapp = pixMode === 'anonymous' ? '5500000000000' : pixPhone;
+
             const response = await axios.post('/api/payment', {
-                email: 'admin@redflix.com',
-                whatsapp: '5571991644164',
+                email,
+                whatsapp,
                 amount: pixAmount,
-                description: `Cobranca Manual - ${pixName}`,
+                description: pixMode === 'anonymous'
+                    ? `Pix Anônimo - ${pixAmount}`
+                    : `Pix Manual - ${pixName}`,
             });
 
-            const { qrCode, copyPaste } = response.data;
+            const { qrCode, copyPaste, txId } = response.data;
 
             if (qrCode && copyPaste) {
                 setGeneratedPixImage(qrCode);
                 setGeneratedPixString(copyPaste);
+                setPixTxId(txId);
+
+                // Start monitoring payment status
+                monitorPixPayment(txId);
             } else {
                 throw new Error('API não retornou dados de Pix.');
             }
@@ -120,6 +141,21 @@ export default function AdminDashboard() {
         } finally {
             setPixLoading(false);
         }
+    };
+
+    // Monitor Payment Status in Real-Time
+    const monitorPixPayment = (txId: string) => {
+        const unsubscribe = onSnapshot(doc(db, "payments", txId.toLowerCase()), (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                if (data.status === 'approved' || data.status === 'paid') {
+                    setPixSuccess(true);
+                    unsubscribe(); // Stop listening
+                }
+            }
+        }, (error) => {
+            console.error('Error monitoring payment:', error);
+        });
     };
 
     // Check Auth on Mount (Session logic)
