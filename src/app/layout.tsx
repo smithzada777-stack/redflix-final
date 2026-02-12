@@ -32,7 +32,6 @@ export default function RootLayout({
     <html lang="pt-BR" className="scroll-smooth">
       <body className={clsx(outfit.variable, "antialiased bg-[var(--color-rf-bg)] text-white font-sans min-h-screen")}>
         <GlobalElements />
-        <Toaster position="top-center" theme="dark" />
         {children}
       </body>
     </html>
