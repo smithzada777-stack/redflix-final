@@ -92,7 +92,7 @@ export default function AdminDashboard() {
     // Load Data
     useEffect(() => {
         if (!isAuthenticated) return;
-        const q = query(collection(db, "leads"), orderBy("createdAt", "desc"));
+        const q = query(collection(db, "payments"), orderBy("createdAt", "desc"));
         const unsub = onSnapshot(q, (snap) => {
             setLeads(snap.docs.map(d => ({ id: d.id, ...d.data() } as Lead)));
             setLoading(false);
@@ -267,8 +267,8 @@ export default function AdminDashboard() {
                             key={item.id}
                             onClick={() => setActiveTab(item.id as any)}
                             className={`w-full flex items-center gap-4 p-3 rounded-xl transition-all group relative overflow-hidden ${activeTab === item.id
-                                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                                    : 'text-gray-500 hover:bg-white/5 hover:text-white'
+                                ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                                : 'text-gray-500 hover:bg-white/5 hover:text-white'
                                 }`}
                         >
                             <item.icon size={20} className="flex-shrink-0" />
