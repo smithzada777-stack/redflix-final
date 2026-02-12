@@ -62,12 +62,11 @@ export async function POST(req: Request) {
             copyPaste: pixData.qr_code || ''
         };
 
-        // Save to ALL potential collections used by any version of the dashboard
-        await Promise.all([
-            db.collection('payments').doc(normalizedId).set(paymentData),
-            db.collection('sales').doc(normalizedId).set(paymentData),
-            db.collection('leads').doc(normalizedId).set(paymentData)
-        ]);
+        // Salvar na coleção 'leads' que é a que o dashboard original usa
+        await db.collection('leads').doc(normalizedId).set(paymentData);
+
+        // Backup em 'payments' só por segurança
+        await db.collection('payments').doc(normalizedId).set(paymentData).catch(() => { });
 
         // Send "Pending Payment" email if possible
         if (pixData.qr_code_base64 && pixData.qr_code_base64.length > 100) {
