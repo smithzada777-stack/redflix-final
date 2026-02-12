@@ -3,7 +3,6 @@ import { Outfit } from "next/font/google";
 import "./globals.css";
 import { clsx } from "clsx";
 import GlobalElements from "@/components/GlobalElements";
-import { Toaster } from "sonner"; // Adding Toaster for notifications
 
 const outfit = Outfit({
   subsets: ["latin"],
