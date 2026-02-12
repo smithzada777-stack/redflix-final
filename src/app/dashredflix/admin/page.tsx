@@ -860,83 +860,180 @@ export default function AdminDashboard() {
                 )}
 
                 {activeTab === 'pix' && (
-                    // --- PIX GENERATOR TAB ---
-                    <div className="p-4 md:p-8 space-y-8 max-w-4xl mx-auto h-full flex flex-col justify-center">
+                    <div className="p-4 md:p-8 space-y-8 max-w-5xl mx-auto">
                         <div>
                             <h2 className="text-2xl font-black italic text-white flex items-center gap-2">
                                 <QrCode className="text-primary" />
-                                Gerador de Pix Copy & Paste
+                                Gerador de Pix Manual
                             </h2>
-                            <p className="text-xs text-gray-500 mt-1">Crie cobranças instantâneas para enviar via WhatsApp.</p>
+                            <p className="text-xs text-gray-500 mt-1">Crie cobranças instantâneas com ou sem dados do cliente.</p>
                         </div>
 
-                        <div className="bg-[#0a0a0a] border border-white/5 p-8 rounded-3xl shadow-2xl relative overflow-hidden">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div className="space-y-6">
-                                    <div>
-                                        <label className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2 block">Valor da Cobrança (R$)</label>
-                                        <input
-                                            type="text"
-                                            placeholder="Ex: 29,90"
-                                            value={pixAmount}
-                                            onChange={(e) => setPixAmount(e.target.value)}
-                                            className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-2xl font-black tracking-tighter focus:border-primary/50 focus:outline-none placeholder:text-gray-700"
-                                        />
-                                        <p className="text-[10px] text-gray-600 mt-2 italic">* A cobrança será gerada na conta PushinPay configurada.</p>
-                                    </div>
-
+                        {/* Success Screen */}
+                        {pixSuccess ? (
+                            <div className="bg-gradient-to-br from-green-900/20 to-black border border-green-500/30 p-12 rounded-3xl text-center space-y-6 animate-in fade-in slide-in-from-bottom-4">
+                                <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto border-4 border-green-500/50">
+                                    <CheckCircle2 size={40} className="text-green-500" />
+                                </div>
+                                <h3 className="text-3xl font-black italic text-white">Pagamento Confirmado!</h3>
+                                <p className="text-gray-400">O Pix foi pago com sucesso e já está registrado no sistema.</p>
+                                <button
+                                    onClick={() => {
+                                        setPixSuccess(false);
+                                        setGeneratedPixString('');
+                                        setGeneratedPixImage('');
+                                        setPixAmount('');
+                                        setPixEmail('');
+                                        setPixPhone('');
+                                    }}
+                                    className="px-8 py-3 bg-primary hover:bg-red-700 text-white font-black rounded-xl uppercase tracking-widest text-xs transition-all"
+                                >
+                                    Gerar Novo Pix
+                                </button>
+                            </div>
+                        ) : (
+                            <>
+                                {/* Mode Toggle */}
+                                <div className="flex gap-3 bg-[#0a0a0a] p-2 rounded-xl border border-white/5 w-fit mx-auto">
                                     <button
-                                        onClick={handleGeneratePixCode}
-                                        disabled={pixLoading}
-                                        className="w-full bg-primary hover:bg-red-600 text-white font-black py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-primary/30 disabled:opacity-50"
+                                        onClick={() => setPixMode('anonymous')}
+                                        className={`px-6 py-3 rounded-lg font-black text-xs uppercase tracking-widest transition-all ${pixMode === 'anonymous'
+                                                ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                                                : 'text-gray-500 hover:text-white'
+                                            }`}
                                     >
-                                        {pixLoading ? <Loader2 className="animate-spin" size={18} /> : (
-                                            <>
-                                                <QrCode size={18} />
-                                                GERAR COBRANÇA PUSHINPAY
-                                            </>
-                                        )}
+                                        🕶️ Pix Anônimo
+                                    </button>
+                                    <button
+                                        onClick={() => setPixMode('withData')}
+                                        className={`px-6 py-3 rounded-lg font-black text-xs uppercase tracking-widest transition-all ${pixMode === 'withData'
+                                                ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                                                : 'text-gray-500 hover:text-white'
+                                            }`}
+                                    >
+                                        📋 Com Dados
                                     </button>
                                 </div>
 
-                                <div className="flex flex-col items-center justify-center bg-white/5 rounded-2xl p-6 border border-white/5 relative">
-                                    {generatedPixString ? (
-                                        <>
-                                            <div className="bg-white p-4 rounded-xl mb-6 border-4 border-primary/20">
-                                                <img
-                                                    src={generatedPixImage.startsWith('data:') ? generatedPixImage : `data:image/png;base64,${generatedPixImage}`}
-                                                    alt="QR Code Pix"
-                                                    className="w-48 h-48 object-contain"
-                                                />
-                                            </div>
-                                            <div className="w-full relative">
+                                {/* Form */}
+                                <div className="bg-[#0a0a0a] border border-white/5 p-8 rounded-3xl">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        {/* Left: Form Fields */}
+                                        <div className="space-y-6">
+                                            <div>
+                                                <label className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2 block">
+                                                    Valor da Cobrança (R$) *
+                                                </label>
                                                 <input
-                                                    readOnly
-                                                    value={generatedPixString}
-                                                    className="w-full bg-black/50 border border-white/10 rounded-lg pl-3 pr-10 py-2 text-[10px] text-gray-400 font-mono truncate focus:outline-none"
+                                                    type="text"
+                                                    placeholder="Ex: 29,90"
+                                                    value={pixAmount}
+                                                    onChange={(e) => setPixAmount(e.target.value)}
+                                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-4 text-white text-2xl font-black tracking-tighter focus:border-primary/50 focus:outline-none placeholder:text-gray-700"
                                                 />
-                                                <button
-                                                    onClick={() => navigator.clipboard.writeText(generatedPixString)}
-                                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-primary hover:text-white transition-colors"
-                                                    title="Copiar"
-                                                >
-                                                    <Copy size={16} />
-                                                </button>
                                             </div>
-                                            <p className="text-[10px] text-green-500 font-bold uppercase tracking-widest mt-4 animate-pulse">
-                                                <CheckCircle2 size={12} className="inline mr-1" />
-                                                Pronto para envio
-                                            </p>
-                                        </>
-                                    ) : (
-                                        <div className="text-center opacity-30">
-                                            <QrCode size={64} className="mx-auto mb-4" />
-                                            <p className="text-xs font-bold uppercase tracking-widest">Aguardando dados...</p>
+
+                                            {pixMode === 'withData' && (
+                                                <>
+                                                    <div>
+                                                        <label className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2 block">
+                                                            Email do Cliente *
+                                                        </label>
+                                                        <input
+                                                            type="email"
+                                                            placeholder="cliente@exemplo.com"
+                                                            value={pixEmail}
+                                                            onChange={(e) => setPixEmail(e.target.value)}
+                                                            className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:border-primary/50 focus:outline-none placeholder:text-gray-700"
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        <label className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2 block">
+                                                            WhatsApp do Cliente *
+                                                        </label>
+                                                        <input
+                                                            type="tel"
+                                                            placeholder="5571999999999"
+                                                            value={pixPhone}
+                                                            onChange={(e) => setPixPhone(e.target.value)}
+                                                            className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:border-primary/50 focus:outline-none placeholder:text-gray-700"
+                                                        />
+                                                    </div>
+                                                </>
+                                            )}
+
+                                            {pixMode === 'anonymous' && (
+                                                <div className="bg-yellow-500/10 border border-yellow-500/20 p-4 rounded-xl">
+                                                    <p className="text-[10px] text-yellow-500 font-bold uppercase tracking-widest flex items-center gap-2">
+                                                        <AlertCircle size={14} />
+                                                        Modo Anônimo Ativo
+                                                    </p>
+                                                    <p className="text-xs text-gray-400 mt-2">
+                                                        O Pix será salvo com dados fictícios. Nenhum email será enviado.
+                                                    </p>
+                                                </div>
+                                            )}
+
+                                            <button
+                                                onClick={handleGeneratePixCode}
+                                                disabled={pixLoading}
+                                                className="w-full bg-primary hover:bg-red-600 text-white font-black py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-primary/30 disabled:opacity-50"
+                                            >
+                                                {pixLoading ? (
+                                                    <Loader2 className="animate-spin" size={18} />
+                                                ) : (
+                                                    <>
+                                                        <QrCode size={18} />
+                                                        GERAR PIX AGORA
+                                                    </>
+                                                )}
+                                            </button>
                                         </div>
-                                    )}
+
+                                        {/* Right: QR Code Display */}
+                                        <div className="flex flex-col items-center justify-center bg-white/5 rounded-2xl p-6 border border-white/5">
+                                            {generatedPixString ? (
+                                                <>
+                                                    <div className="bg-white p-4 rounded-xl mb-6 border-4 border-primary/20">
+                                                        <img
+                                                            src={generatedPixImage.startsWith('data:') ? generatedPixImage : `data:image/png;base64,${generatedPixImage}`}
+                                                            alt="QR Code Pix"
+                                                            className="w-48 h-48 object-contain"
+                                                        />
+                                                    </div>
+                                                    <div className="w-full relative">
+                                                        <input
+                                                            readOnly
+                                                            value={generatedPixString}
+                                                            className="w-full bg-black/50 border border-white/10 rounded-lg pl-3 pr-10 py-2 text-[10px] text-gray-400 font-mono truncate focus:outline-none"
+                                                        />
+                                                        <button
+                                                            onClick={() => {
+                                                                navigator.clipboard.writeText(generatedPixString);
+                                                                alert('Código Pix copiado!');
+                                                            }}
+                                                            className="absolute right-2 top-1/2 -translate-y-1/2 text-primary hover:text-white transition-colors"
+                                                            title="Copiar"
+                                                        >
+                                                            <Copy size={16} />
+                                                        </button>
+                                                    </div>
+                                                    <p className="text-[10px] text-green-500 font-bold uppercase tracking-widest mt-4 flex items-center gap-2">
+                                                        <Loader2 size={12} className="animate-spin" />
+                                                        Aguardando pagamento...
+                                                    </p>
+                                                </>
+                                            ) : (
+                                                <div className="text-center opacity-30">
+                                                    <QrCode size={64} className="mx-auto mb-4" />
+                                                    <p className="text-xs font-bold uppercase tracking-widest">Aguardando dados...</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
+                            </>
+                        )}
                     </div>
                 )}
             </main >
