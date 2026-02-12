@@ -100,22 +100,23 @@ export default function AdminDashboard() {
 
         try {
             const response = await axios.post('/api/payment', {
+                email: 'admin@redflix.com',
+                whatsapp: '5571991644164',
                 amount: pixAmount,
                 description: `Cobranca Manual - ${pixName}`,
-                payerEmail: 'admin@redflix.com', // Admin generated
             });
 
-            const { qrcode_content, qrcode_image_url } = response.data;
+            const { qrCode, copyPaste } = response.data;
 
-            if (qrcode_content) {
-                setGeneratedPixString(qrcode_content);
-                setGeneratedPixImage(qrcode_image_url);
+            if (qrCode && copyPaste) {
+                setGeneratedPixImage(qrCode);
+                setGeneratedPixString(copyPaste);
             } else {
-                throw new Error('PushinPay não retornou dados.');
+                throw new Error('API não retornou dados de Pix.');
             }
         } catch (error: any) {
             console.error("Erro dashboard pix:", error);
-            alert(error.response?.data?.error || 'Erro ao gerar Pix via PushinPay.');
+            alert(error.response?.data?.error || 'Erro ao gerar Pix. Verifique o console.');
         } finally {
             setPixLoading(false);
         }
