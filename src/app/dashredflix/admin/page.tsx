@@ -186,8 +186,11 @@ export default function AdminDashboard() {
         // Consultamos a coleção 'payments', que é onde o /api/diag confirmou que os PIX estão salvos
         const q = query(collection(db, "payments"), orderBy("createdAt", "desc"));
         const unsubscribe = onSnapshot(q, (snapshot) => {
+            console.log("🔥 FIREBASE SNAPSHOT RECEBIDO:", snapshot.docs.length, "documentos");
+
             const data = snapshot.docs.map(doc => {
                 const d = doc.data();
+                console.log("📄 Documento:", doc.id, d);
 
                 // Convert Firebase Timestamp to Firestore Timestamp if needed
                 let createdAt = d.createdAt || null;
@@ -205,6 +208,8 @@ export default function AdminDashboard() {
                     createdAt
                 } as Lead;
             });
+
+            console.log("✅ DADOS PROCESSADOS:", data.length, "leads", data);
             setLeads(data);
             setLoading(false);
         }, (err) => {
