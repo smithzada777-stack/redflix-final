@@ -1,57 +1,26 @@
 'use client';
-
 import { MessageCircle } from 'lucide-react';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
 
 export default function WhatsAppButton() {
-    const [showTooltip, setShowTooltip] = useState(false);
-
-    useEffect(() => {
-        // A mensagem aparece depois de 3 segundos
-        const showTimer = setTimeout(() => {
-            setShowTooltip(true);
-
-            // A mensagem fecha sozinha após 8 segundos
-            const hideTimer = setTimeout(() => {
-                setShowTooltip(false);
-            }, 8000);
-
-            return () => clearTimeout(hideTimer);
-        }, 3000);
-
-        return () => clearTimeout(showTimer);
-    }, []);
-
     return (
-        <div className="fixed right-6 bottom-6 z-50 flex items-center justify-end">
-
-            {/* Round Message (Saindo de dentro do botão) */}
-            <div
-                className={`
-                    absolute right-0 bottom-0
-                    bg-primary text-white h-12 md:h-16 px-6 md:px-10 rounded-full shadow-2xl shadow-primary/40
-                    transition-all duration-700 ease-out flex items-center justify-center
-                    whitespace-nowrap border border-white/10 origin-right
-                    ${showTooltip
-                        ? 'opacity-100 translate-x-[-70px] md:translate-x-[-80px] scale-100 pointer-events-auto'
-                        : 'opacity-0 translate-x-0 scale-0 pointer-events-none'
-                    }
-                `}
-            >
-                <span className="font-bold text-[10px] md:text-sm tracking-tight text-white">
-                    Ficou com dúvida? <span className="font-black underline">Chame o suporte!</span>
-                </span>
+        <a
+            href="https://wa.me/5571991644164?text=Oi%2C%20quero%20assinar%20o%20RedFlix%21"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="fixed bottom-6 right-6 z-50 group"
+        >
+            {/* Balão de CTA sempre visível no desktop, hover no mobile */}
+            <div className="absolute bottom-full right-0 mb-3 w-40 opacity-0 group-hover:opacity-100 md:opacity-100 transition-opacity duration-300 pointer-events-none md:pointer-events-auto">
+                <div className="bg-white text-black px-4 py-2 rounded-xl shadow-[0_4px_15px_rgba(0,0,0,0.3)] font-bold text-sm text-center relative border border-gray-200">
+                    Fale com a gente!
+                    <div className="absolute -bottom-2 right-5 w-4 h-4 bg-white transform rotate-45 border-b border-r border-gray-200"></div>
+                </div>
             </div>
 
-            {/* Main Red Button (Fixo) */}
-            <Link
-                href="https://wa.me/5571991644164?text=%20Olá,%20vi%20o%20site%20RedFlix%20e%20gostaria%20de%20tirar%20algumas%20dúvidas."
-                target="_blank"
-                className="relative z-10 w-16 h-16 bg-primary rounded-full flex items-center justify-center shadow-[0_10px_30px_rgba(229,9,20,0.4)] cursor-pointer hover:shadow-[0_15px_40px_rgba(229,9,20,0.6)] transition-all duration-500 hover:scale-110 active:scale-95"
-            >
-                <MessageCircle size={32} className="text-white fill-current" />
-            </Link>
-        </div>
+            {/* Botão Vermelho Pulsante */}
+            <div className="bg-[#E50914] hover:bg-[#ff0a16] text-white p-4 rounded-full shadow-[0_0_20px_rgba(229,9,20,0.5)] transition-all transform hover:scale-110 active:scale-95 flex items-center justify-center animate-pulse">
+                <MessageCircle size={32} strokeWidth={2.5} />
+            </div>
+        </a>
     );
 }

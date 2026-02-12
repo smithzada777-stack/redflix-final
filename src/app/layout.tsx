@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google"; // Correct font as requested
 import "./globals.css";
 import { clsx } from "clsx";
+import ScrollProgressBar from "@/components/ui/ScrollProgressBar";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -29,7 +31,9 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className="scroll-smooth">
       <body className={clsx(outfit.variable, "antialiased bg-[var(--color-rf-bg)] text-white font-sans min-h-screen")}>
+        <ScrollProgressBar />
         {children}
+        <WhatsAppButton />
       </body>
     </html>
   );

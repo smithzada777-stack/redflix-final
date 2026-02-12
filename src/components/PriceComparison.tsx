@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 
-// SVG Logos Component (Restaurado com Imagens Reais)
+// SVG Logos Component
 const CompetitorLogo = ({ name, className = "", color = "currentColor" }: { name: string, className?: string, color?: string }) => {
     const logos: { [key: string]: string } = {
         'Netflix': 'https://i.imgur.com/ixKdf90.png',
@@ -23,7 +24,6 @@ const CompetitorLogo = ({ name, className = "", color = "currentColor" }: { name
             />
         );
     }
-
     return <span style={{ color }}>{name}</span>;
 };
 
@@ -38,7 +38,7 @@ const competitors = [
 export default function PriceComparison() {
     const [currentSlide, setCurrentSlide] = useState(0);
 
-    // Auto-advance carousel (VELOCIDADE TURBO: 1.5s)
+    // Auto-advance carousel
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentSlide((prev) => (prev + 1) % competitors.length);
@@ -56,7 +56,13 @@ export default function PriceComparison() {
             <div className="container mx-auto px-6 relative z-10">
 
                 {/* Headline Section */}
-                <div className="text-center max-w-5xl mx-auto mb-16 md:mb-20">
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8 }}
+                    className="text-center max-w-5xl mx-auto mb-16 md:mb-20"
+                >
                     <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold mb-6 tracking-tight leading-tight">
                         Você <span className="text-primary font-black">paga mensalidade</span>... e ainda <span className="text-primary font-black">cobram mais</span> por filmes?
                     </h2>
@@ -67,11 +73,12 @@ export default function PriceComparison() {
                         </p>
                         <div className="absolute bottom-[-2px] left-0 right-0 h-[4px] md:h-[5.5px] bg-primary rounded-full -z-0"></div>
                     </div>
-                </div>
+                </motion.div>
 
-                {/* Comparison Card Mobile (EXCLUSIVA) */}
+                {/* Comparison Card Mobile */}
                 <div className="flex md:hidden flex-col gap-8 items-center justify-center max-w-sm mx-auto">
-                    <div className="relative w-full group">
+                    {/* Competitor Card */}
+                    <div className="relative w-full group scale-95 opacity-80">
                         <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20 bg-gray-200 text-black px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-wider border-2 border-white">VOCÊ PAGA NA</div>
                         <div className="w-full h-[300px] bg-[#0d0d0d] border-2 rounded-2xl p-5 text-center flex flex-col justify-between transition-colors duration-500" style={{ borderColor: currentCompetitor.color }}>
                             <div className="flex items-center justify-center py-2 h-12">
@@ -91,11 +98,17 @@ export default function PriceComparison() {
                         </div>
                     </div>
 
-                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center font-black text-black text-sm z-20 border-2 border-primary">VS</div>
+                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center font-black text-black text-sm z-20 border-2 border-primary -my-4 relative">VS</div>
 
-                    <div className="relative w-full">
-                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20 bg-primary text-white px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-wider shadow-lg border-2 border-red-400">NA REDFLIX</div>
-                        <div className="w-full h-[360px] bg-gradient-to-b from-[#1a0505] to-black border-2 border-primary rounded-2xl p-5 text-center flex flex-col justify-between shadow-[0_0_30px_rgba(229,9,20,0.2)]">
+                    {/* RedFlix Card Mobile */}
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        className="relative w-full z-10"
+                    >
+                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20 bg-primary text-white px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-wider shadow-lg border-2 border-white">NA REDFLIX</div>
+                        <div className="w-full h-[360px] bg-gradient-to-b from-[#1a0505] to-black border-2 border-primary rounded-2xl p-5 text-center flex flex-col justify-between shadow-[0_0_40px_rgba(229,9,20,0.3)]">
                             <div className="py-2"><h3 className="text-2xl font-black text-white italic">TUDO <span className="text-primary text-3xl">LIBERADO</span></h3></div>
                             <div className="flex flex-col items-center">
                                 <span className="text-primary text-[10px] font-bold uppercase">Preço Único</span>
@@ -114,12 +127,13 @@ export default function PriceComparison() {
                                 <div className="bg-primary/20 rounded-lg p-2 border border-primary/30"><p className="text-white font-bold text-xs italic">Economize + de R$ 2.000</p></div>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
 
                 {/* --- VERSÃO DESKTOP --- */}
                 <div className="hidden md:flex gap-12 items-center justify-center max-w-6xl mx-auto">
-                    <div className="relative w-full max-w-sm group">
+                    {/* Competitor Card Desktop */}
+                    <div className="relative w-full max-w-sm group opacity-60 hover:opacity-100 transition-opacity duration-500">
                         <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-20 bg-gray-200 text-black px-5 py-2 rounded-full text-xs font-black uppercase tracking-wider shadow-lg transform -rotate-2 border-2 border-white whitespace-nowrap">VOCÊ PAGA NA</div>
                         <div className="w-full h-[440px] bg-[#0a0a0a] border-2 rounded-3xl p-8 pb-4 text-center relative overflow-hidden flex flex-col transition-colors duration-500" style={{ borderColor: currentCompetitor.color }}>
                             <div className="absolute inset-0 opacity-10" style={{ background: `radial-gradient(circle at center, ${currentCompetitor.color}, transparent 70%)` }} />
@@ -140,14 +154,21 @@ export default function PriceComparison() {
                         </div>
                     </div>
 
-                    <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center font-black text-black text-2xl shadow-[0_0_30px_rgba(255,255,255,0.3)] z-20 border-4 border-[#0f0f0f]">VS</div>
+                    <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center font-black text-black text-2xl shadow-[0_0_30px_rgba(255,255,255,0.3)] z-20 border-4 border-[#0f0f0f] relative">VS</div>
 
-                    <div className="relative w-full max-w-sm">
-                        <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-20 bg-primary text-white px-5 py-2 rounded-full text-xs font-black uppercase tracking-wider shadow-[0_0_20px_rgba(229,9,20,0.4)] transform rotate-2 border-2 border-[#ff4d4d]">NA REDFLIX</div>
-                        <div className="w-full h-[440px] bg-gradient-to-b from-[#1a0505] to-black border-2 border-primary rounded-3xl p-8 pb-4 text-center relative overflow-hidden flex flex-col shadow-[0_0_50px_rgba(229,9,20,0.15)]">
+                    {/* RedFlix Card Desktop */}
+                    <motion.div
+                        initial={{ opacity: 0, x: 50 }}
+                        whileInView={{ opacity: 1, x: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.6 }}
+                        className="relative w-full max-w-sm z-30"
+                    >
+                        <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-20 bg-primary text-white px-5 py-2 rounded-full text-xs font-black uppercase tracking-wider shadow-[0_0_20px_rgba(229,9,20,0.4)] transform rotate-2 border-2 border-white">NA REDFLIX</div>
+                        <div className="w-full h-[440px] bg-gradient-to-b from-[#1a0505] to-black border-2 border-primary rounded-3xl p-8 pb-4 text-center relative overflow-hidden flex flex-col shadow-[0_0_60px_rgba(229,9,20,0.25)] hover:scale-105 transition-transform duration-300">
                             <div className="absolute top-0 inset-x-0 h-[100px] bg-gradient-to-b from-primary/20 to-transparent"></div>
                             <div className="relative z-10 h-24 flex items-center justify-center mt-2">
-                                <h3 className="text-5xl font-black text-white italic tracking-tighter">TUDO <span className="text-primary">LIBERADO:</span></h3>
+                                <h3 className="text-5xl font-black text-white italic tracking-tighter drop-shadow-lg">TUDO <span className="text-primary">LIBERADO:</span></h3>
                             </div>
                             <div className="relative z-10 h-36 flex flex-col items-center justify-center">
                                 <span className="text-primary font-bold text-xs mb-1 uppercase tracking-wider">Apenas</span>
@@ -158,7 +179,6 @@ export default function PriceComparison() {
                                 <div className="bg-neutral-100/5 rounded-xl p-3 border border-primary/20 mb-2">
                                     <p className="text-[10px] text-gray-400 mb-2 uppercase tracking-widest font-bold">Inclui conteúdo de:</p>
                                     <div className="flex justify-center gap-6 overflow-hidden">
-                                        {/* LOGOS EM VELOCIDADE DE 8s (IGUAL FILMES) */}
                                         <div className="animate-marquee flex items-center gap-8" style={{ animationDuration: '8s' }}>
                                             {competitors.map(c => <CompetitorLogo key={c.name} name={c.name} className="h-6 w-auto" />)}
                                             {competitors.map(c => <CompetitorLogo key={c.name + 'd'} name={c.name} className="h-6 w-auto" />)}
@@ -168,11 +188,16 @@ export default function PriceComparison() {
                                 <div className="bg-primary/10 rounded-xl p-3 border border-primary/20"><p className="text-white font-bold text-lg leading-tight">+ de R$ 2.000 no bolso</p></div>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
 
                 {/* Total Cost Alert */}
-                <div className="mt-10 md:mt-12 bg-white/5 backdrop-blur-sm border border-white/5 rounded-[2rem] p-6 md:p-10 max-w-4xl mx-auto text-center relative overflow-hidden group">
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="mt-10 md:mt-12 bg-white/5 backdrop-blur-sm border border-white/5 rounded-[2rem] p-6 md:p-10 max-w-4xl mx-auto text-center relative overflow-hidden group"
+                >
                     <div className="relative z-10 space-y-6">
                         <p className="text-gray-400 text-sm md:text-xl font-medium leading-relaxed">
                             Assinar todos separadamente custaria <span className="text-white font-bold underline underline-offset-4 decoration-red-500/30">R$ 2.296,80 por ano</span>.
@@ -180,10 +205,10 @@ export default function PriceComparison() {
                         </p>
                         <div className="pt-4 border-t border-white/5">
                             <h3 className="text-xl md:text-3xl font-black text-white mb-4 uppercase italic leading-tight">Vai continuar <span className="text-primary italic">jogando dinheiro fora</span> todo mês?</h3>
-                            <a href="#plans" className="inline-block bg-primary hover:bg-red-700 text-white font-black py-4 px-10 rounded-full text-xs md:text-sm uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(229,9,20,0.3)]">Quero economizar agora!</a>
+                            <a href="#plans" className="inline-block bg-primary hover:bg-[#f40612] text-white font-black py-4 px-10 rounded-full text-xs md:text-sm uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(229,9,20,0.3)]">Quero economizar agora!</a>
                         </div>
                     </div>
-                </div>
+                </motion.div>
             </div>
         </section>
     );
