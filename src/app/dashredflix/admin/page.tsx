@@ -183,11 +183,16 @@ export default function AdminDashboard() {
     useEffect(() => {
         if (!isAuthenticated) return;
 
-        const q = query(collection(db, "leads"), orderBy("createdAt", "desc"));
+        const q = query(collection(db, "sales"), orderBy("createdAt", "desc"));
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const data = snapshot.docs.map(doc => ({
                 id: doc.id,
-                ...doc.data()
+                email: doc.data().email || '',
+                phone: doc.data().whatsapp || doc.data().phone || '',
+                plan: doc.data().planName || doc.data().plan || 'Sem Plano',
+                price: String(doc.data().amount || '0'),
+                status: doc.data().status || 'pending',
+                createdAt: doc.data().createdAt || null
             } as Lead));
             setLeads(data);
             setLoading(false);
@@ -898,8 +903,8 @@ export default function AdminDashboard() {
                                     <button
                                         onClick={() => setPixMode('anonymous')}
                                         className={`px-6 py-3 rounded-lg font-black text-xs uppercase tracking-widest transition-all ${pixMode === 'anonymous'
-                                                ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                                                : 'text-gray-500 hover:text-white'
+                                            ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                                            : 'text-gray-500 hover:text-white'
                                             }`}
                                     >
                                         🕶️ Pix Anônimo
@@ -907,8 +912,8 @@ export default function AdminDashboard() {
                                     <button
                                         onClick={() => setPixMode('withData')}
                                         className={`px-6 py-3 rounded-lg font-black text-xs uppercase tracking-widest transition-all ${pixMode === 'withData'
-                                                ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                                                : 'text-gray-500 hover:text-white'
+                                            ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                                            : 'text-gray-500 hover:text-white'
                                             }`}
                                     >
                                         📋 Com Dados
