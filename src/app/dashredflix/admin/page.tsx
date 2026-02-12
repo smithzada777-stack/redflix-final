@@ -188,6 +188,13 @@ export default function AdminDashboard() {
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const data = snapshot.docs.map(doc => {
                 const d = doc.data();
+
+                // Convert Firebase Timestamp to Firestore Timestamp if needed
+                let createdAt = d.createdAt || null;
+                if (createdAt && typeof createdAt === 'object' && '_seconds' in createdAt) {
+                    createdAt = new Timestamp(createdAt._seconds, createdAt._nanoseconds || 0);
+                }
+
                 return {
                     id: doc.id,
                     email: d.email || d.payerEmail || 'Sem email',
@@ -195,7 +202,7 @@ export default function AdminDashboard() {
                     plan: d.planName || d.plan || d.description || 'Plano Registrado',
                     price: String(d.amount || d.price || d.value || '0'),
                     status: d.status || 'pending',
-                    createdAt: d.createdAt || null
+                    createdAt
                 } as Lead;
             });
             setLeads(data);
