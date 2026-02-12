@@ -9,7 +9,6 @@ try {
         if (serviceAccountStr) {
             const serviceAccount = JSON.parse(serviceAccountStr);
 
-            // Fix private key newlines if they are escaped as literal '\n'
             if (serviceAccount.private_key && typeof serviceAccount.private_key === 'string') {
                 serviceAccount.private_key = serviceAccount.private_key.replace(/\\n/g, '\n');
             }
@@ -17,55 +16,28 @@ try {
             admin.initializeApp({
                 credential: admin.credential.cert(serviceAccount),
             });
-            console.log('✅ Firebase Admin initialized successfully');
+            console.log('✅ Firebase Admin: Conectado com sucesso ao projeto', serviceAccount.project_id);
             dbInstance = admin.firestore();
-            dbInstance.isMock = false;
         } else {
-            console.warn('⚠️ FIREBASE_SERVICE_ACCOUNT environment variable is missing.');
-            throw new Error("Missing credentials");
+            throw new Error("Variável FIREBASE_SERVICE_ACCOUNT não encontrada.");
         }
     } else {
         dbInstance = admin.firestore();
-        dbInstance.isMock = false;
     }
 } catch (error: any) {
-    console.error('❌ Firebase Initialization Error:', error.message);
-
-    // Improved Mock DB implementation to prevent dashboard crashes
-    const mockDoc = {
-        set: async () => console.log('Mock DB: Document saved'),
-        get: async () => ({
-            exists: true,
-            id: 'mock_doc',
-            data: () => ({
-                status: 'pending',
-                email: 'demo@redflix.app',
-                whatsapp: '11999999999',
-                amount: 27.90,
-                planName: 'Plano Mensal',
-                createdAt: new Date()
-            })
-        }),
-        update: async () => console.log('Mock DB: Document updated'),
-    };
-
-    const mockCollection: any = {
-        doc: () => mockDoc,
-        where: () => mockCollection,
-        orderBy: () => mockCollection,
-        limit: () => mockCollection,
-        get: async () => ({ docs: [] }) // Return empty list instead of crashing
-    };
-
+    console.error('❌ ERRO FATAL FIREBASE ADMIN:', error.message);
+    // Fallback mínimo apenas para o build não quebrar
     dbInstance = {
-        collection: () => mockCollection,
-        batch: () => ({
-            set: () => { },
-            update: () => { },
-            delete: () => { },
-            commit: async () => { }
-        }),
-        isMock: true
+        collection: (name: string) => ({
+            doc: () => ({
+                set: async () => { throw new Error('Firebase não inicializado corretamente'); },
+                update: async () => { throw new Error('Firebase não inicializado corretamente'); },
+                get: async () => ({ exists: false }),
+            }),
+            where: () => dbInstance.collection(name),
+            orderBy: () => dbInstance.collection(name),
+            get: async () => ({ docs: [] })
+        })
     };
 }
 

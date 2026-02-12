@@ -200,7 +200,8 @@ export default function AdminDashboard() {
             setLeads(data);
             setLoading(false);
         }, (err) => {
-            console.error("Erro Firebase:", err);
+            console.error("❌ ERRO FIREBASE SNAPSHOT:", err);
+            alert("Erro ao conectar com o banco de dados. Verifique as regras do Firebase.");
             setLoading(false);
         });
 

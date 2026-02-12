@@ -17,15 +17,16 @@ export async function POST(req: Request) {
         }
 
         // PushinPay sends as x-www-form-urlencoded (as per manual)
-        const formData = await req.formData();
+        const bodyText = await req.text();
+        const params = new URLSearchParams(bodyText);
         const data: any = {};
-        formData.forEach((value, key) => { data[key] = value; });
+        params.forEach((value, key) => { data[key] = value; });
 
         // Normalize ID to lowercase (Rule of Gold #1 in manual)
-        const id = String(data.id || '').toLowerCase();
+        const id = String(data.id || '').trim().toLowerCase();
         const status = data.status;
 
-        console.log('Webhook PushinPay:', { id, status });
+        console.log('Webhook PushinPay Recebido:', { id, status });
 
         if (!id) return NextResponse.json({ error: 'No ID' }, { status: 400 });
 
