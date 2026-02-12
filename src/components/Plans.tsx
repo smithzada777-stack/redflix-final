@@ -94,7 +94,7 @@ export default function Plans() {
                 {/* Divider Line (FAQ Style) */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-6xl h-[5px] bg-gradient-to-r from-transparent via-primary/50 to-transparent shadow-[0_0_20px_rgba(229,9,20,0.3)]" />
                 {/* Background Atmosphere - Subtle Red Glow */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+                {/* Background Atmosphere - Removed Red Glow */}
 
                 <div className="container mx-auto px-6 relative z-10">
                     <div className="max-w-3xl mx-auto text-center mb-10 md:mb-14">
@@ -136,12 +136,12 @@ export default function Plans() {
                                         <div className="flex items-baseline gap-0.5 mt-0.5">
                                             <span className={`font-bold ${plan.highlight ? 'text-xl text-primary/50' : 'text-lg text-white/30'}`}>R$</span>
                                             <span className={`font-black tracking-tighter ${plan.highlight
-                                                ? 'text-6xl md:text-7xl text-primary drop-shadow-[0_0_20px_rgba(229,9,20,0.4)]'
-                                                : 'text-4xl md:text-5xl text-white'
+                                                ? 'text-7xl md:text-9xl text-primary drop-shadow-[0_0_30px_rgba(229,9,20,0.6)]'
+                                                : 'text-5xl md:text-6xl text-white'
                                                 }`}>
                                                 {plan.price.split(',')[0]}
                                             </span>
-                                            <span className={`font-bold ${plan.highlight ? 'text-xl text-primary/50' : 'text-lg text-white/30'}`}>
+                                            <span className={`font-bold pb-2 ${plan.highlight ? 'text-2xl text-primary' : 'text-xl text-white/40'}`}>
                                                 ,{plan.price.split(',')[1]}
                                             </span>
                                         </div>

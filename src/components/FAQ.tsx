@@ -21,7 +21,8 @@ export default function FAQ() {
     return (
         <section className="py-16 md:py-24 bg-[#0a0a0a] relative">
             {/* Divider Line */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-6xl h-[5px] bg-gradient-to-r from-transparent via-primary/50 to-transparent shadow-[0_0_20px_rgba(229,9,20,0.3)]" />
+            {/* Divider Line */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-6xl h-[1px] bg-white/10" />
 
             <div className="container mx-auto px-6 max-w-3xl">
 

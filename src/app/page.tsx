@@ -12,39 +12,39 @@ import WhatsAppButton from '@/components/WhatsAppButton';
 import BackToTop from '@/components/BackToTop';
 
 const sportsItems = [
-  { id: 1, name: 'Brasileirão', img: 'https://i.imgur.com/KzbghZn.png' },
-  { id: 2, name: 'Copa do Mundo', img: 'https://i.imgur.com/oozXd3K.png' },
-  { id: 3, name: 'Copa do Nordeste', img: 'https://i.imgur.com/8JocDJp.png' },
-  { id: 4, name: 'NBA', img: 'https://i.imgur.com/aVGJOG6.png' },
-  { id: 5, name: 'UFC', img: 'https://i.imgur.com/kCiNi9e.png' },
-  { id: 6, name: 'Premiere', img: 'https://i.imgur.com/rv4vxMN.png' },
-  { id: 7, name: 'CazéTV', img: 'https://i.imgur.com/JKR83pe.png' },
-  { id: 8, name: 'ESPN', img: 'https://i.imgur.com/U0Tr1Z7.png' },
-  { id: 9, name: 'SPORTV', img: 'https://i.imgur.com/vIrkVYY.png' },
+  { id: 1, name: 'Brasileirão', img: 'https://i.imgur.com/KzbghZn.png', badge: 'AO VIVO' },
+  { id: 2, name: 'Copa do Mundo', img: 'https://i.imgur.com/oozXd3K.png', badge: 'EXCLUSIVO' },
+  { id: 3, name: 'Copa do Nordeste', img: 'https://i.imgur.com/8JocDJp.png', badge: 'AO VIVO' },
+  { id: 4, name: 'NBA', img: 'https://i.imgur.com/aVGJOG6.png', badge: 'FINAIS' },
+  { id: 5, name: 'UFC', img: 'https://i.imgur.com/kCiNi9e.png', badge: 'COMBATE' },
+  { id: 6, name: 'Premiere', img: 'https://i.imgur.com/rv4vxMN.png', badge: '24H' },
+  { id: 7, name: 'CazéTV', img: 'https://i.imgur.com/JKR83pe.png', badge: 'ONLINE' },
+  { id: 8, name: 'ESPN', img: 'https://i.imgur.com/U0Tr1Z7.png', badge: 'ESPORTES' },
+  { id: 9, name: 'SPORTV', img: 'https://i.imgur.com/vIrkVYY.png', badge: 'AO VIVO' },
 ];
 
 const moviesItems = [
-  { id: 1, name: 'Avatar: Fogos e Cinzas', img: 'https://i.imgur.com/o5aFK6U.png' },
-  { id: 2, name: 'Zootopia 2', img: 'https://i.imgur.com/ZNgNuQE.png' },
-  { id: 3, name: 'Truque de Mestre 3', img: 'https://i.imgur.com/FAfqJZq.png' },
-  { id: 4, name: 'Jurassic World: Rebirth', img: 'https://i.imgur.com/9TNCuaG.png' },
-  { id: 5, name: 'Minecraft Filme', img: 'https://i.imgur.com/36sJP7U.png' },
-  { id: 6, name: 'Missão Impossível 8', img: 'https://i.imgur.com/D4DWCtR.png' },
-  { id: 7, name: 'Bailarina (John Wick)', img: 'https://i.imgur.com/wDqFB1z.png' },
-  { id: 8, name: 'Mickey 17', img: 'https://i.imgur.com/XcHZOKv.png' },
-  { id: 9, name: '28 Anos Depois', img: 'https://i.imgur.com/QSvAHgB.png' },
+  { id: 1, name: 'Avatar: Fogos e Cinzas', img: 'https://i.imgur.com/o5aFK6U.png', badge: 'ESTREIA' },
+  { id: 2, name: 'Zootopia 2', img: 'https://i.imgur.com/ZNgNuQE.png', badge: 'NOVO' },
+  { id: 3, name: 'Truque de Mestre 3', img: 'https://i.imgur.com/FAfqJZq.png', badge: 'EM BREVE' },
+  { id: 4, name: 'Jurassic World: Rebirth', img: 'https://i.imgur.com/9TNCuaG.png', badge: '4K' },
+  { id: 5, name: 'Minecraft Filme', img: 'https://i.imgur.com/36sJP7U.png', badge: 'KIDS' },
+  { id: 6, name: 'Missão Impossível 8', img: 'https://i.imgur.com/D4DWCtR.png', badge: 'AÇÃO' },
+  { id: 7, name: 'Bailarina (John Wick)', img: 'https://i.imgur.com/wDqFB1z.png', badge: 'TOP 10' },
+  { id: 8, name: 'Mickey 17', img: 'https://i.imgur.com/XcHZOKv.png', badge: 'SCI-FI' },
+  { id: 9, name: '28 Anos Depois', img: 'https://i.imgur.com/QSvAHgB.png', badge: 'TERROR' },
 ];
 
 const seriesItems = [
-  { id: 1, name: 'Stranger Things', img: 'https://i.imgur.com/4eIqVnR.png' },
-  { id: 2, name: 'The Walking Dead', img: 'https://i.imgur.com/YbDnYHB.png' },
-  { id: 3, name: 'Vikings', img: 'https://i.imgur.com/MJIgYFX.png' },
-  { id: 4, name: 'Game of Thrones', img: 'https://i.imgur.com/7Y4BgjE.png' },
-  { id: 5, name: 'Breaking Bad', img: 'https://i.imgur.com/PJy6JUu.png' },
-  { id: 6, name: 'La Casa de Papel', img: 'https://i.imgur.com/T16gYjr.png' },
-  { id: 7, name: 'The Boys', img: 'https://i.imgur.com/A2gXG5T.png' },
-  { id: 8, name: 'Peaky Blinders', img: 'https://i.imgur.com/sGgQcrT.png' },
-  { id: 9, name: 'Black Mirror', img: 'https://i.imgur.com/9g7RPOv.png' },
+  { id: 1, name: 'Stranger Things', img: 'https://i.imgur.com/4eIqVnR.png', badge: 'FINAL' },
+  { id: 2, name: 'The Walking Dead', img: 'https://i.imgur.com/YbDnYHB.png', badge: 'COMPLETA' },
+  { id: 3, name: 'Vikings', img: 'https://i.imgur.com/MJIgYFX.png', badge: 'ÉPICO' },
+  { id: 4, name: 'Game of Thrones', img: 'https://i.imgur.com/7Y4BgjE.png', badge: 'TOP 1' },
+  { id: 5, name: 'Breaking Bad', img: 'https://i.imgur.com/PJy6JUu.png', badge: 'IMPERDÍVEL' },
+  { id: 6, name: 'La Casa de Papel', img: 'https://i.imgur.com/T16gYjr.png', badge: 'TOP BR' },
+  { id: 7, name: 'The Boys', img: 'https://i.imgur.com/A2gXG5T.png', badge: 'NOVA TEMP' },
+  { id: 8, name: 'Peaky Blinders', img: 'https://i.imgur.com/sGgQcrT.png', badge: 'CLÁSSICO' },
+  { id: 9, name: 'Black Mirror', img: 'https://i.imgur.com/9g7RPOv.png', badge: 'VIRAL' },
 ];
 
 export default function Home() {

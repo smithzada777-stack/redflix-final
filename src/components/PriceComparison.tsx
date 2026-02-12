@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
-// SVG Logos Component
+// SVG Logos Component (Restaurado com Imagens Reais)
 const CompetitorLogo = ({ name, className = "", color = "currentColor" }: { name: string, className?: string, color?: string }) => {
     const logos: { [key: string]: string } = {
         'Netflix': 'https://i.imgur.com/ixKdf90.png',
@@ -20,11 +20,11 @@ const CompetitorLogo = ({ name, className = "", color = "currentColor" }: { name
             <img
                 src={logoUrl}
                 alt={`${name} Logo`}
-                className={`${className} object-contain`}
+                className={`${className} object-contain opacity-100`}
             />
         );
     }
-    return <span style={{ color }}>{name}</span>;
+    return <span style={{ color }} className="font-bold opacity-100">{name}</span>;
 };
 
 const competitors = [
@@ -98,36 +98,44 @@ export default function PriceComparison() {
                         </div>
                     </div>
 
-                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center font-black text-black text-sm z-20 border-2 border-primary -my-4 relative">VS</div>
+                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center font-black text-black text-sm z-30 border-2 border-primary -my-4 relative shadow-lg">VS</div>
 
                     {/* RedFlix Card Mobile */}
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        className="relative w-full z-10"
-                    >
-                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20 bg-primary text-white px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-wider shadow-lg border-2 border-white">NA REDFLIX</div>
-                        <div className="w-full h-[360px] bg-gradient-to-b from-[#1a0505] to-black border-2 border-primary rounded-2xl p-5 text-center flex flex-col justify-between shadow-[0_0_40px_rgba(229,9,20,0.3)]">
-                            <div className="py-2"><h3 className="text-2xl font-black text-white italic">TUDO <span className="text-primary text-3xl">LIBERADO</span></h3></div>
-                            <div className="flex flex-col items-center">
-                                <span className="text-primary text-[10px] font-bold uppercase">Preço Único</span>
-                                <div className="flex items-baseline gap-1">
-                                    <span className="text-xs text-primary font-bold">R$</span>
-                                    <span className="text-5xl font-black text-white">29,90</span>
-                                </div>
-                                <span className="text-gray-400 text-[10px] font-bold">por mês</span>
-                            </div>
-                            <div className="space-y-3">
-                                <div className="bg-white/5 rounded-lg p-2 border border-primary/20">
-                                    <div className="flex justify-center gap-4 opacity-50">
-                                        {competitors.slice(0, 3).map(c => <CompetitorLogo key={c.name} name={c.name} className="h-3 w-auto" />)}
-                                    </div>
-                                </div>
-                                <div className="bg-primary/20 rounded-lg p-2 border border-primary/30"><p className="text-white font-bold text-xs italic">Economize + de R$ 2.000</p></div>
+                    <div className="relative w-full z-10">
+                        {/* Label "NA REDFLIX" corrigido (Sem fundo branco bugado) */}
+                        <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-30">
+                            <div className="bg-primary text-white px-5 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider border-2 border-white shadow-[0_5px_15px_rgba(229,9,20,0.4)] whitespace-nowrap">
+                                NA REDFLIX
                             </div>
                         </div>
-                    </motion.div>
+
+                        <div className="w-full h-[380px] bg-[#050505] border-[3px] border-primary rounded-3xl p-6 text-center flex flex-col justify-between shadow-[0_0_50px_rgba(229,9,20,0.25)] relative overflow-hidden">
+                            {/* Inner Glow */}
+                            <div className="absolute inset-0 bg-primary/5 pointer-events-none" />
+
+                            <div className="relative z-10 py-3">
+                                <h3 className="text-3xl font-black text-white italic drop-shadow-md">TUDO <span className="text-primary text-4xl block mt-1 drop-shadow-[0_0_10px_rgba(229,9,20,0.8)]">LIBERADO:</span></h3>
+                            </div>
+
+                            <div className="relative z-10 flex flex-col items-center">
+                                <span className="text-primary text-xs font-black uppercase tracking-widest mb-1">Preço Único</span>
+                                <div className="flex items-baseline gap-1">
+                                    <span className="text-sm text-primary font-bold">R$</span>
+                                    <span className="text-6xl font-black text-white drop-shadow-lg">29,90</span>
+                                </div>
+                                <span className="text-gray-400 text-[10px] font-bold uppercase tracking-wider">por mês</span>
+                            </div>
+
+                            <div className="relative z-10 space-y-4 pt-2">
+                                <div className="bg-white/5 rounded-xl p-2.5 border border-white/10 backdrop-blur-sm">
+                                    <div className="flex justify-center gap-4 opacity-70">
+                                        {competitors.slice(0, 3).map(c => <CompetitorLogo key={c.name} name={c.name} className="h-4 w-auto" />)}
+                                    </div>
+                                </div>
+                                <div className="bg-primary rounded-xl p-3 shadow-lg shadow-primary/20 transform scale-105"><p className="text-white font-black text-xs uppercase tracking-wide">Economize + de R$ 2.000</p></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {/* --- VERSÃO DESKTOP --- */}
@@ -162,10 +170,16 @@ export default function PriceComparison() {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.6 }}
-                        className="relative w-full max-w-sm z-30"
+                        className="relative w-full max-w-sm z-20"
                     >
-                        <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-20 bg-primary text-white px-5 py-2 rounded-full text-xs font-black uppercase tracking-wider shadow-[0_0_20px_rgba(229,9,20,0.4)] transform rotate-2 border-2 border-white">NA REDFLIX</div>
-                        <div className="w-full h-[440px] bg-gradient-to-b from-[#1a0505] to-black border-2 border-primary rounded-3xl p-8 pb-4 text-center relative overflow-hidden flex flex-col shadow-[0_0_60px_rgba(229,9,20,0.25)] hover:scale-105 transition-transform duration-300">
+                        {/* FIXED: Label "NA REDFLIX" z-index and styling */}
+                        <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-50">
+                            <div className="bg-primary text-white px-8 py-2.5 rounded-full text-sm font-black uppercase tracking-widest shadow-[0_0_25px_rgba(229,9,20,0.6)] transform rotate-2 border-[3px] border-white whitespace-nowrap">
+                                NA REDFLIX
+                            </div>
+                        </div>
+
+                        <div className="w-full h-[480px] bg-[#050505] border-[3px] border-primary rounded-[2.5rem] p-8 pb-4 text-center relative overflow-visible flex flex-col shadow-[0_0_80px_rgba(229,9,20,0.2)] hover:scale-105 transition-transform duration-300 z-10">
                             <div className="absolute top-0 inset-x-0 h-[100px] bg-gradient-to-b from-primary/20 to-transparent"></div>
                             <div className="relative z-10 h-24 flex items-center justify-center mt-2">
                                 <h3 className="text-5xl font-black text-white italic tracking-tighter drop-shadow-lg">TUDO <span className="text-primary">LIBERADO:</span></h3>

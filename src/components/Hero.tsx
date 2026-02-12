@@ -38,17 +38,15 @@ const Hero = () => {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="relative z-20 text-[28px] md:text-4xl lg:text-5xl font-bold tracking-tighter leading-[1.1] font-[family-name:var(--font-inter)]"
+                        className="relative z-20 text-[28px] md:text-5xl lg:text-6xl font-bold tracking-tighter leading-[1.1] font-[family-name:var(--font-inter)]"
                     >
-                        Cansado de <span className="text-primary uppercase font-black tracking-tight whitespace-nowrap drop-shadow-[0_0_15px_rgba(229,9,20,0.5)]">pagar caro</span><br />
+                        Cansado de <span className="text-[#ff0000] uppercase font-black tracking-tight whitespace-nowrap drop-shadow-[0_0_25px_rgba(255,0,0,0.6)] underline decoration-4 decoration-red-600 underline-offset-4">pagar caro</span><br />
                         por{' '}
                         <span className="relative inline-block px-1 whitespace-nowrap">
-                            catálogos
-                            <span className="absolute bottom-1 left-0 right-0 h-[4px] md:h-[6px] bg-primary rounded-full -z-10 opacity-80"></span>
+                            <span className="border-b-4 border-red-600">catálogos</span>
                         </span>{' '}
                         <span className="relative inline-block px-1 whitespace-nowrap">
-                            limitados?
-                            <span className="absolute bottom-1 left-0 right-0 h-[4px] md:h-[6px] bg-primary rounded-full -z-10 opacity-80"></span>
+                            <span className="border-b-4 border-red-600">limitados?</span>
                         </span>
                     </motion.h1>
 
@@ -89,9 +87,9 @@ const Hero = () => {
                         className="mt-2 md:mt-8 w-full md:w-auto"
                     >
                         <Link href="#pricing" className="w-full md:w-auto block">
-                            <button className="relative w-full md:w-auto bg-primary hover:bg-[#f40612] text-white font-bold text-base md:text-lg px-8 py-4 rounded-full inline-flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 group overflow-hidden shadow-[0_0_40px_rgba(229,9,20,0.6)] border border-white/10">
-                                <span className="relative z-10">Assine agora e economize</span>
-                                <ArrowRight className="relative z-10 transition-transform group-hover:translate-x-1" size={18} />
+                            <button className="relative w-full md:w-auto bg-[#E50914] hover:bg-[#ff0000] text-white font-black text-lg md:text-xl px-10 py-5 rounded-full inline-flex items-center justify-center gap-3 transition-all hover:scale-105 active:scale-95 group overflow-hidden shadow-[0_0_50px_rgba(229,9,20,0.5)] border-2 border-white/20">
+                                <span className="relative z-10 uppercase tracking-wider">Assine agora e economize</span>
+                                <ArrowRight className="relative z-10 transition-transform group-hover:translate-x-1" size={24} strokeWidth={3} />
                             </button>
                         </Link>
                     </motion.div>

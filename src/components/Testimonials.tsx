@@ -28,12 +28,12 @@ export default function Testimonials() {
     return (
         <section className="pt-12 pb-16 bg-black relative overflow-hidden">
             {/* Cinematic Background */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+            {/* Cinematic Background - Removed Blur */}
 
             <div className="container mx-auto px-6 relative z-10">
                 <div className="max-w-4xl mx-auto text-center mb-8 px-4">
                     <h2 className="text-3xl md:text-5xl font-black mb-4 tracking-tighter text-white uppercase italic">
-                        Vê o que a <span className="text-primary italic drop-shadow-[0_0_15px_rgba(229,9,20,0.4)]">galera</span> tá achando:
+                        Vê o que a <span className="text-primary italic drop-shadow-[0_0_15px_rgba(229,9,20,0.6)]">GALERA REAL</span> tá achando:
                     </h2>
                     <p className="text-gray-500 text-xs md:text-base font-bold uppercase tracking-widest">Relatos reais de quem já economiza com a RedFlix</p>
                 </div>
@@ -78,7 +78,8 @@ export default function Testimonials() {
                             {[...testimonials, ...testimonials].map((t, i) => (
                                 <div
                                     key={`${t.id}-${i}`}
-                                    className="flex-none w-[350px] bg-[#0d0d0d] p-8 rounded-[2rem] border border-white/5 shadow-2xl transition-all duration-500 hover:border-primary/30 hover:bg-[#121212]"
+                                    // Removed excessive padding and adjusted mask for less cutoff
+                                    className="flex-none w-[350px] bg-[#0d0d0d] p-8 rounded-[2rem] border border-white/5 shadow-2xl transition-all duration-500 hover:border-primary/50 hover:bg-[#121212]"
                                 >
                                     <div className="flex items-center justify-between mb-6">
                                         <div className="flex gap-1">
