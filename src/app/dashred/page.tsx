@@ -93,11 +93,26 @@ export default function AdminDashboard() {
     useEffect(() => {
         if (!isAuthenticated) return;
         const q = query(collection(db, "payments"), orderBy("createdAt", "desc"));
-        const unsub = onSnapshot(q, (snap) => {
-            setLeads(snap.docs.map(d => ({ id: d.id, ...d.data() } as Lead)));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const data = snapshot.docs.map(doc => {
+                const d = doc.data();
+                return {
+                    id: doc.id,
+                    email: d.email || d.payerEmail || '',
+                    phone: d.phone || d.whatsapp || d.payerPhone || '',
+                    plan: d.plan || d.planName || d.description || 'Pix Manual',
+                    price: String(d.price || d.amount || d.value || '0'),
+                    status: d.status || 'pending',
+                    createdAt: d.createdAt || null
+                } as Lead;
+            });
+            setLeads(data);
+            setLoading(false);
+        }, (err) => {
+            console.error("Error fetching leads:", err);
             setLoading(false);
         });
-        return () => unsub();
+        return () => unsubscribe();
     }, [isAuthenticated]);
 
     // Handlers
