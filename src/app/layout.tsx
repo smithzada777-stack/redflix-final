@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Outfit } from "next/font/google"; // Correct font as requested
+import { Outfit } from "next/font/google";
 import "./globals.css";
 import { clsx } from "clsx";
-import ScrollProgressBar from "@/components/ui/ScrollProgressBar";
-import WhatsAppButton from "@/components/WhatsAppButton";
+import GlobalElements from "@/components/GlobalElements";
+import { Toaster } from "sonner"; // Adding Toaster for notifications
 
 const outfit = Outfit({
   subsets: ["latin"],
   variable: "--font-outfit",
-  weight: ["300", "400", "500", "600", "700", "800"], // Explicit weights
+  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
@@ -31,9 +31,9 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className="scroll-smooth">
       <body className={clsx(outfit.variable, "antialiased bg-[var(--color-rf-bg)] text-white font-sans min-h-screen")}>
-        <ScrollProgressBar />
+        <GlobalElements />
+        <Toaster position="top-center" theme="dark" />
         {children}
-        <WhatsAppButton />
       </body>
     </html>
   );
