@@ -183,8 +183,8 @@ export default function AdminDashboard() {
     useEffect(() => {
         if (!isAuthenticated) return;
 
-        // Consultamos a coleção 'leads', que é onde o print do Adalmir confirmou que os dados estão
-        const q = query(collection(db, "leads"), orderBy("createdAt", "desc"));
+        // Consultamos a coleção 'payments', que é onde o /api/diag confirmou que os PIX estão salvos
+        const q = query(collection(db, "payments"), orderBy("createdAt", "desc"));
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const data = snapshot.docs.map(doc => {
                 const d = doc.data();
