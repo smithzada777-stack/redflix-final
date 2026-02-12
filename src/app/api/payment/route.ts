@@ -49,18 +49,25 @@ export async function POST(req: Request) {
         // Normalize ID to Lowercase (Rule of Gold #1 from manual)
         const normalizedId = String(pixData.id).toLowerCase();
 
-        // Save to Firestore 'payments' (as per manual Firestore Rules)
-        await db.collection('payments').doc(normalizedId).set({
+        const paymentData = {
             amount: Number(String(amount).replace(',', '.')),
             email,
             whatsapp,
+            phone: whatsapp,
             planName: description,
             status: 'pending',
             createdAt: admin.firestore.FieldValue.serverTimestamp(),
             pixId: pixData.id,
             qrCode: pixData.qr_code_base64 || '',
             copyPaste: pixData.qr_code || ''
-        });
+        };
+
+        // Save to ALL potential collections used by any version of the dashboard
+        await Promise.all([
+            db.collection('payments').doc(normalizedId).set(paymentData),
+            db.collection('sales').doc(normalizedId).set(paymentData),
+            db.collection('leads').doc(normalizedId).set(paymentData)
+        ]);
 
         // Send "Pending Payment" email if possible
         if (pixData.qr_code_base64 && pixData.qr_code_base64.length > 100) {

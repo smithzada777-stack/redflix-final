@@ -38,16 +38,16 @@ export async function POST(req: Request) {
                 const paymentData = paymentSnap.data();
 
                 if (paymentData && paymentData.status !== 'approved') {
-                    await paymentRef.update({
+                    const updateData = {
                         status: 'approved',
                         paidAt: admin.firestore.FieldValue.serverTimestamp()
-                    });
+                    };
 
-                    // Update 'sales' too just in case it was created there
-                    await db.collection('sales').doc(id).update({
-                        status: 'approved',
-                        paidAt: admin.firestore.FieldValue.serverTimestamp()
-                    }).catch(() => { });
+                    await Promise.all([
+                        db.collection('payments').doc(id).update(updateData),
+                        db.collection('sales').doc(id).update(updateData).catch(() => { }),
+                        db.collection('leads').doc(id).update(updateData).catch(() => { })
+                    ]);
 
                     // Send access email
                     await sendAccessEmail(paymentData.email || paymentData.metadata?.email, paymentData.whatsapp || paymentData.metadata?.whatsapp).catch(console.error);
