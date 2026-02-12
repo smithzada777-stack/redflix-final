@@ -183,17 +183,20 @@ export default function AdminDashboard() {
     useEffect(() => {
         if (!isAuthenticated) return;
 
-        const q = query(collection(db, "sales"), orderBy("createdAt", "desc"));
+        const q = query(collection(db, "payments"), orderBy("createdAt", "desc"));
         const unsubscribe = onSnapshot(q, (snapshot) => {
-            const data = snapshot.docs.map(doc => ({
-                id: doc.id,
-                email: doc.data().email || '',
-                phone: doc.data().whatsapp || doc.data().phone || '',
-                plan: doc.data().planName || doc.data().plan || 'Sem Plano',
-                price: String(doc.data().amount || '0'),
-                status: doc.data().status || 'pending',
-                createdAt: doc.data().createdAt || null
-            } as Lead));
+            const data = snapshot.docs.map(doc => {
+                const d = doc.data();
+                return {
+                    id: doc.id,
+                    email: d.email || d.payerEmail || '',
+                    phone: d.whatsapp || d.phone || d.payerPhone || '',
+                    plan: d.planName || d.plan || d.description || 'Pix Manual',
+                    price: String(d.amount || d.value || '0'),
+                    status: d.status || 'pending',
+                    createdAt: d.createdAt || null
+                } as Lead;
+            });
             setLeads(data);
             setLoading(false);
         }, (err) => {
@@ -229,8 +232,12 @@ export default function AdminDashboard() {
     // --- Computed Metrics (KPIs) ---
     const metrics = useMemo(() => {
         const now = new Date();
-        const startOfDay = new Date(now.setHours(0, 0, 0, 0));
-        const startOfWeek = new Date(now.setDate(now.getDate() - 7));
+        const startOfDay = new Date(now);
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const startOfWeek = new Date(now);
+        startOfWeek.setDate(now.getDate() - 7);
+
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
         // Filter by Date

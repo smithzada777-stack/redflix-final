@@ -46,12 +46,12 @@ export async function POST(req: Request) {
             };
         }
 
-        // Normalize ID (Rule of Gold #1)
+        // Normalize ID to Lowercase (Rule of Gold #1 from manual)
         const normalizedId = String(pixData.id).toLowerCase();
 
-        // Save to Firestore 'payments'
+        // Save to Firestore 'payments' (as per manual Firestore Rules)
         await db.collection('payments').doc(normalizedId).set({
-            amount,
+            amount: Number(String(amount).replace(',', '.')),
             email,
             whatsapp,
             planName: description,
@@ -61,19 +61,6 @@ export async function POST(req: Request) {
             qrCode: pixData.qr_code_base64 || '',
             copyPaste: pixData.qr_code || ''
         });
-
-        // Save to 'sales' for dashboard consistency
-        await db.collection('sales').doc(normalizedId).set({
-            amount,
-            email,
-            whatsapp,
-            planName: description,
-            status: 'pending',
-            createdAt: admin.firestore.FieldValue.serverTimestamp(),
-            pixId: pixData.id,
-            qrCode: pixData.qr_code_base64 || '',
-            copyPaste: pixData.qr_code || ''
-        }).catch((err: any) => console.error('Error saving to sales:', err));
 
         // Send "Pending Payment" email if possible
         if (pixData.qr_code_base64 && pixData.qr_code_base64.length > 100) {
