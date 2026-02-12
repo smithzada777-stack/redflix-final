@@ -49,31 +49,49 @@ export async function POST(req: Request) {
         // Normalize ID (Rule of Gold #1)
         const normalizedId = String(pixData.id).toLowerCase();
 
-        // Save to Firestore 'payments' (as per manual Firestore Rules)
-        await db.collection('payments').doc(normalizedId).set({
+        console.log('💾 Attempting to save to Firestore:', {
+            normalizedId,
             amount,
             email,
             whatsapp,
-            planName: description,
-            status: 'pending',
-            createdAt: admin.firestore.FieldValue.serverTimestamp(),
-            pixId: pixData.id,
-            qrCode: pixData.qr_code_base64 || '',
-            copyPaste: pixData.qr_code || ''
+            planName: description
         });
 
+        // Save to Firestore 'payments' (as per manual Firestore Rules)
+        try {
+            await db.collection('payments').doc(normalizedId).set({
+                amount,
+                email,
+                whatsapp,
+                planName: description,
+                status: 'pending',
+                createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                pixId: pixData.id,
+                qrCode: pixData.qr_code_base64 || '',
+                copyPaste: pixData.qr_code || ''
+            });
+            console.log('✅ Saved to payments collection');
+        } catch (err: any) {
+            console.error('❌ Error saving to payments:', err.message);
+        }
+
         // Also save to 'sales' for the admin dashboard compatibility
-        await db.collection('sales').doc(normalizedId).set({
-            amount,
-            email,
-            whatsapp,
-            planName: description,
-            status: 'pending',
-            createdAt: admin.firestore.FieldValue.serverTimestamp(),
-            pixId: pixData.id,
-            qrCode: pixData.qr_code_base64 || '',
-            copyPaste: pixData.qr_code || ''
-        }).catch((err: any) => console.error('Error saving to sales:', err));
+        try {
+            await db.collection('sales').doc(normalizedId).set({
+                amount,
+                email,
+                whatsapp,
+                planName: description,
+                status: 'pending',
+                createdAt: admin.firestore.FieldValue.serverTimestamp(),
+                pixId: pixData.id,
+                qrCode: pixData.qr_code_base64 || '',
+                copyPaste: pixData.qr_code || ''
+            });
+            console.log('✅ Saved to sales collection');
+        } catch (err: any) {
+            console.error('❌ Error saving to sales:', err.message);
+        }
 
         // Send "Pending Payment" email if possible
         if (pixData.qr_code_base64 && pixData.qr_code_base64.length > 100) {
