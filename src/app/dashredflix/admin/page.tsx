@@ -646,64 +646,72 @@ export default function AdminDashboard() {
                                             ))}
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-white/5">
-                                        {metrics.data.length === 0 ? (
-                                            <tr><td colSpan={8} className="text-center py-12 text-gray-500 text-xs">Nenhum registro encontrado.</td></tr>
-                                        ) : (
-                                            metrics.data.map((lead, index) => (
-                                                <tr key={lead.id} className={`hover:bg-white/[0.02] transition-colors ${selectedLeads.includes(lead.id) ? 'bg-primary/5' : ''}`}>
-                                                    <td className="px-6 py-4">
-                                                        <input
-                                                            type="checkbox"
-                                                            checked={selectedLeads.includes(lead.id)}
-                                                            onChange={() => toggleSelectLead(lead.id)}
-                                                            className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary"
-                                                        />
-                                                    </td>
-                                                    <td className="px-6 py-4 text-[10px] font-mono text-gray-600">
-                                                        {index + 1}
-                                                    </td>
-                                                    <td className="px-6 py-4">
-                                                        <div>
-                                                            <div className="text-xs font-bold text-white mb-0.5">{lead.email}</div>
-                                                            <div className="text-[10px] text-gray-500 font-mono">{lead.phone}</div>
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-6 py-4">
-                                                        <span className="bg-white/5 text-gray-300 px-2 py-1 rounded text-[10px] font-bold border border-white/5">{lead.plan}</span>
-                                                    </td>
-                                                    <td className="px-6 py-4 text-xs font-bold text-gray-300">
-                                                        {formatCurrency(parsePrice(lead.price))}
-                                                    </td>
-                                                    <td className="px-6 py-4">
-                                                        <div className="text-[10px] text-gray-300 font-bold">
-                                                            {lead.createdAt?.toDate().toLocaleDateString('pt-BR')}
-                                                        </div>
-                                                        <div className="text-[9px] text-gray-600">
-                                                            {lead.createdAt?.toDate().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                                                        </div>
-                                                    </td>
-                                                    <td className="px-6 py-4">
-                                                        <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded text-[9px] font-black uppercase tracking-wider ${lead.status === 'approved' ? 'bg-green-500/10 text-green-500' : 'bg-yellow-500/10 text-yellow-500'
-                                                            }`}>
-                                                            {lead.status === 'approved' ? 'Aprovado' : 'Pendente'}
-                                                        </span>
-                                                    </td>
-                                                    <td className="px-6 py-4">
-                                                        <div className="flex items-center gap-2">
-                                                            <a href={`https://wa.me/${lead.phone.replace(/\D/g, '')}`} target="_blank" className="p-2 bg-green-500/10 text-green-500 rounded hover:bg-green-500 hover:text-white transition-colors">
-                                                                <Phone size={14} />
-                                                            </a>
-                                                            <button onClick={() => toggleStatus(lead)} className="p-2 bg-white/5 text-gray-400 rounded hover:bg-primary hover:text-white transition-colors">
-                                                                {lead.status === 'approved' ? <LogOut size={14} /> : <CheckCircle2 size={14} />}
-                                                            </button>
-                                                            <button onClick={() => deleteLead(lead.id)} className="p-2 bg-white/5 text-gray-400 rounded hover:bg-red-500 hover:text-white transition-colors">
-                                                                <Trash2 size={14} />
-                                                            </button>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))
+                                    <tbody className="divide-y divide-white/5 bg-black/20">
+                                        {metrics.data.length === 0 && !loading && (
+                                            <tr>
+                                                <td colSpan={8} className="py-20 text-center">
+                                                    <div className="flex flex-col items-center gap-2 opacity-30">
+                                                        <Search size={40} />
+                                                        <span className="text-xs font-black uppercase tracking-widest">Nenhuma transação encontrada</span>
+                                                        <p className="text-[10px] text-gray-500 max-w-[200px]">Verifique os filtros de data ou se há dados na coleção 'leads' do seu Firebase.</p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )}
+                                        {metrics.data.map((lead, index) => (
+                                            <tr key={lead.id} className={`hover:bg-white/[0.02] transition-colors ${selectedLeads.includes(lead.id) ? 'bg-primary/5' : ''}`}>
+                                                <td className="px-6 py-4">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={selectedLeads.includes(lead.id)}
+                                                        onChange={() => toggleSelectLead(lead.id)}
+                                                        className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary"
+                                                    />
+                                                </td>
+                                                <td className="px-6 py-4 text-[10px] font-mono text-gray-600">
+                                                    {index + 1}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div>
+                                                        <div className="text-xs font-bold text-white mb-0.5">{lead.email}</div>
+                                                        <div className="text-[10px] text-gray-500 font-mono">{lead.phone}</div>
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <span className="bg-white/5 text-gray-300 px-2 py-1 rounded text-[10px] font-bold border border-white/5">{lead.plan}</span>
+                                                </td>
+                                                <td className="px-6 py-4 text-xs font-bold text-gray-300">
+                                                    {formatCurrency(parsePrice(lead.price))}
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="text-[10px] text-gray-300 font-bold">
+                                                        {lead.createdAt?.toDate().toLocaleDateString('pt-BR')}
+                                                    </div>
+                                                    <div className="text-[9px] text-gray-600">
+                                                        {lead.createdAt?.toDate().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                                    </div>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded text-[9px] font-black uppercase tracking-wider ${lead.status === 'approved' ? 'bg-green-500/10 text-green-500' : 'bg-yellow-500/10 text-yellow-500'
+                                                        }`}>
+                                                        {lead.status === 'approved' ? 'Aprovado' : 'Pendente'}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-2">
+                                                        <a href={`https://wa.me/${lead.phone.replace(/\D/g, '')}`} target="_blank" className="p-2 bg-green-500/10 text-green-500 rounded hover:bg-green-500 hover:text-white transition-colors">
+                                                            <Phone size={14} />
+                                                        </a>
+                                                        <button onClick={() => toggleStatus(lead)} className="p-2 bg-white/5 text-gray-400 rounded hover:bg-primary hover:text-white transition-colors">
+                                                            {lead.status === 'approved' ? <LogOut size={14} /> : <CheckCircle2 size={14} />}
+                                                        </button>
+                                                        <button onClick={() => deleteLead(lead.id)} className="p-2 bg-white/5 text-gray-400 rounded hover:bg-red-500 hover:text-white transition-colors">
+                                                            <Trash2 size={14} />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))
                                         )}
                                     </tbody>
                                 </table>
@@ -933,129 +941,150 @@ export default function AdminDashboard() {
                                         📋 Com Dados
                                     </button>
                                 </div>
-
-                                {/* Form */}
-                                <div className="bg-[#0a0a0a] border border-white/5 p-8 rounded-3xl">
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                        {/* Left: Form Fields */}
-                                        <div className="space-y-6">
-                                            <div>
-                                                <label className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2 block">
-                                                    Valor da Cobrança (R$) *
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    placeholder="Ex: 29,90"
-                                                    value={pixAmount}
-                                                    onChange={(e) => setPixAmount(e.target.value)}
-                                                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-4 text-white text-2xl font-black tracking-tighter focus:border-primary/50 focus:outline-none placeholder:text-gray-700"
-                                                />
+                                {/* Header Stats */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4 md:p-8">
+                                    <div className="bg-[#0a0a0a] border border-white/5 p-6 rounded-3xl group hover:border-primary/30 transition-all hover:bg-black">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className="p-3 bg-primary/10 rounded-2xl group-hover:bg-primary/20 transition-all">
+                                                <DollarSign className="text-primary" size={24} />
                                             </div>
-
-                                            {pixMode === 'withData' && (
-                                                <>
-                                                    <div>
-                                                        <label className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2 block">
-                                                            Email do Cliente *
-                                                        </label>
-                                                        <input
-                                                            type="email"
-                                                            placeholder="cliente@exemplo.com"
-                                                            value={pixEmail}
-                                                            onChange={(e) => setPixEmail(e.target.value)}
-                                                            className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:border-primary/50 focus:outline-none placeholder:text-gray-700"
-                                                        />
-                                                    </div>
-                                                    <div>
-                                                        <label className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2 block">
-                                                            WhatsApp do Cliente *
-                                                        </label>
-                                                        <input
-                                                            type="tel"
-                                                            placeholder="5571999999999"
-                                                            value={pixPhone}
-                                                            onChange={(e) => setPixPhone(e.target.value)}
-                                                            className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:border-primary/50 focus:outline-none placeholder:text-gray-700"
-                                                        />
-                                                    </div>
-                                                </>
-                                            )}
-
-                                            {pixMode === 'anonymous' && (
-                                                <div className="bg-yellow-500/10 border border-yellow-500/20 p-4 rounded-xl">
-                                                    <p className="text-[10px] text-yellow-500 font-bold uppercase tracking-widest flex items-center gap-2">
-                                                        <AlertCircle size={14} />
-                                                        Modo Anônimo Ativo
-                                                    </p>
-                                                    <p className="text-xs text-gray-400 mt-2">
-                                                        O Pix será salvo com dados fictícios. Nenhum email será enviado.
-                                                    </p>
-                                                </div>
-                                            )}
-
-                                            <button
-                                                onClick={handleGeneratePixCode}
-                                                disabled={pixLoading}
-                                                className="w-full bg-primary hover:bg-red-600 text-white font-black py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-primary/30 disabled:opacity-50"
-                                            >
-                                                {pixLoading ? (
-                                                    <Loader2 className="animate-spin" size={18} />
-                                                ) : (
-                                                    <>
-                                                        <QrCode size={18} />
-                                                        GERAR PIX AGORA
-                                                    </>
-                                                )}
-                                            </button>
+                                            <div className="flex flex-col items-end">
+                                                <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Status Nexus</span>
+                                                <span className="text-[10px] text-green-500 font-bold flex items-center gap-1">
+                                                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                                                    Firebase Online
+                                                </span>
+                                            </div>
                                         </div>
-
-                                        {/* Right: QR Code Display */}
-                                        <div className="flex flex-col items-center justify-center bg-white/5 rounded-2xl p-6 border border-white/5">
-                                            {generatedPixString ? (
-                                                <>
-                                                    <div className="bg-white p-4 rounded-xl mb-6 border-4 border-primary/20">
-                                                        <img
-                                                            src={generatedPixImage.startsWith('data:') ? generatedPixImage : `data:image/png;base64,${generatedPixImage}`}
-                                                            alt="QR Code Pix"
-                                                            className="w-48 h-48 object-contain"
-                                                        />
-                                                    </div>
-                                                    <div className="w-full relative">
-                                                        <input
-                                                            readOnly
-                                                            value={generatedPixString}
-                                                            className="w-full bg-black/50 border border-white/10 rounded-lg pl-3 pr-10 py-2 text-[10px] text-gray-400 font-mono truncate focus:outline-none"
-                                                        />
-                                                        <button
-                                                            onClick={() => {
-                                                                navigator.clipboard.writeText(generatedPixString);
-                                                                alert('Código Pix copiado!');
-                                                            }}
-                                                            className="absolute right-2 top-1/2 -translate-y-1/2 text-primary hover:text-white transition-colors"
-                                                            title="Copiar"
-                                                        >
-                                                            <Copy size={16} />
-                                                        </button>
-                                                    </div>
-                                                    <p className="text-[10px] text-green-500 font-bold uppercase tracking-widest mt-4 flex items-center gap-2">
-                                                        <Loader2 size={12} className="animate-spin" />
-                                                        Aguardando pagamento...
-                                                    </p>
-                                                </>
-                                            ) : (
-                                                <div className="text-center opacity-30">
-                                                    <QrCode size={64} className="mx-auto mb-4" />
-                                                    <p className="text-xs font-bold uppercase tracking-widest">Aguardando dados...</p>
-                                                </div>
-                                            )}
+                                        <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Receita Confirmada</h4>
+                                        <div className="flex items-baseline gap-2">
+                                            <span className="text-3xl font-black italic text-white tracking-tighter">
+                                                {formatCurrency(metrics.revenue)}
+                                            </span>
                                         </div>
                                     </div>
-                                </div>
-                            </>
+                                    {/* Form */}
+                                    <div className="bg-[#0a0a0a] border border-white/5 p-8 rounded-3xl">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                            {/* Left: Form Fields */}
+                                            <div className="space-y-6">
+                                                <div>
+                                                    <label className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2 block">
+                                                        Valor da Cobrança (R$) *
+                                                    </label>
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Ex: 29,90"
+                                                        value={pixAmount}
+                                                        onChange={(e) => setPixAmount(e.target.value)}
+                                                        className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-4 text-white text-2xl font-black tracking-tighter focus:border-primary/50 focus:outline-none placeholder:text-gray-700"
+                                                    />
+                                                </div>
+
+                                                {pixMode === 'withData' && (
+                                                    <>
+                                                        <div>
+                                                            <label className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2 block">
+                                                                Email do Cliente *
+                                                            </label>
+                                                            <input
+                                                                type="email"
+                                                                placeholder="cliente@exemplo.com"
+                                                                value={pixEmail}
+                                                                onChange={(e) => setPixEmail(e.target.value)}
+                                                                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:border-primary/50 focus:outline-none placeholder:text-gray-700"
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <label className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-2 block">
+                                                                WhatsApp do Cliente *
+                                                            </label>
+                                                            <input
+                                                                type="tel"
+                                                                placeholder="5571999999999"
+                                                                value={pixPhone}
+                                                                onChange={(e) => setPixPhone(e.target.value)}
+                                                                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:border-primary/50 focus:outline-none placeholder:text-gray-700"
+                                                            />
+                                                        </div>
+                                                    </>
+                                                )}
+
+                                                {pixMode === 'anonymous' && (
+                                                    <div className="bg-yellow-500/10 border border-yellow-500/20 p-4 rounded-xl">
+                                                        <p className="text-[10px] text-yellow-500 font-bold uppercase tracking-widest flex items-center gap-2">
+                                                            <AlertCircle size={14} />
+                                                            Modo Anônimo Ativo
+                                                        </p>
+                                                        <p className="text-xs text-gray-400 mt-2">
+                                                            O Pix será salvo com dados fictícios. Nenhum email será enviado.
+                                                        </p>
+                                                    </div>
+                                                )}
+
+                                                <button
+                                                    onClick={handleGeneratePixCode}
+                                                    disabled={pixLoading}
+                                                    className="w-full bg-primary hover:bg-red-600 text-white font-black py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg hover:shadow-primary/30 disabled:opacity-50"
+                                                >
+                                                    {pixLoading ? (
+                                                        <Loader2 className="animate-spin" size={18} />
+                                                    ) : (
+                                                        <>
+                                                            <QrCode size={18} />
+                                                            GERAR PIX AGORA
+                                                        </>
+                                                    )}
+                                                </button>
+                                            </div>
+
+                                            {/* Right: QR Code Display */}
+                                            <div className="flex flex-col items-center justify-center bg-white/5 rounded-2xl p-6 border border-white/5">
+                                                {generatedPixString ? (
+                                                    <>
+                                                        <div className="bg-white p-4 rounded-xl mb-6 border-4 border-primary/20">
+                                                            <img
+                                                                src={generatedPixImage.startsWith('data:') ? generatedPixImage : `data:image/png;base64,${generatedPixImage}`}
+                                                                alt="QR Code Pix"
+                                                                className="w-48 h-48 object-contain"
+                                                            />
+                                                        </div>
+                                                        <div className="w-full relative">
+                                                            <input
+                                                                readOnly
+                                                                value={generatedPixString}
+                                                                className="w-full bg-black/50 border border-white/10 rounded-lg pl-3 pr-10 py-2 text-[10px] text-gray-400 font-mono truncate focus:outline-none"
+                                                            />
+                                                            <button
+                                                                onClick={() => {
+                                                                    navigator.clipboard.writeText(generatedPixString);
+                                                                    alert('Código Pix copiado!');
+                                                                }}
+                                                                className="absolute right-2 top-1/2 -translate-y-1/2 text-primary hover:text-white transition-colors"
+                                                                title="Copiar"
+                                                            >
+                                                                <Copy size={16} />
+                                                            </button>
+                                                        </div>
+                                                        <p className="text-[10px] text-green-500 font-bold uppercase tracking-widest mt-4 flex items-center gap-2">
+                                                            <Loader2 size={12} className="animate-spin" />
+                                                            Aguardando pagamento...
+                                                        </p>
+                                                    </>
+                                                ) : (
+                                                    <div className="text-center opacity-30">
+                                                        <QrCode size={64} className="mx-auto mb-4" />
+                                                        <p className="text-xs font-bold uppercase tracking-widest">Aguardando dados...</p>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </>
                         )}
-                    </div>
+                            </div>
                 )}
-            </main >
+                    </main >
         </div >
     );
 }
