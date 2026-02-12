@@ -230,9 +230,6 @@ export default function AdminDashboard() {
         localStorage.removeItem('redflix_admin_session');
     };
 
-    const [dateFilter, setDateFilter] = useState<'today' | 'week' | 'month' | 'all'>('all'); // Mudei para 'all' por padrão para não esconder nada
-    const [searchQuery, setSearchQuery] = useState('');
-
     // --- Computed Metrics (KPIs) ---
     const metrics = useMemo(() => {
         const now = new Date();
