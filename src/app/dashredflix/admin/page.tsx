@@ -183,16 +183,17 @@ export default function AdminDashboard() {
     useEffect(() => {
         if (!isAuthenticated) return;
 
-        const q = query(collection(db, "payments"), orderBy("createdAt", "desc"));
+        // Consultamos a coleção 'leads', que é onde o print do Adalmir confirmou que os dados estão
+        const q = query(collection(db, "leads"), orderBy("createdAt", "desc"));
         const unsubscribe = onSnapshot(q, (snapshot) => {
             const data = snapshot.docs.map(doc => {
                 const d = doc.data();
                 return {
                     id: doc.id,
-                    email: d.email || d.payerEmail || '',
+                    email: d.email || d.payerEmail || 'Sem email',
                     phone: d.whatsapp || d.phone || d.payerPhone || '',
-                    plan: d.planName || d.plan || d.description || 'Pix Manual',
-                    price: String(d.amount || d.value || '0'),
+                    plan: d.planName || d.plan || d.description || 'Plano Registrado',
+                    price: String(d.amount || d.price || d.value || '0'),
                     status: d.status || 'pending',
                     createdAt: d.createdAt || null
                 } as Lead;
@@ -201,7 +202,8 @@ export default function AdminDashboard() {
             setLoading(false);
         }, (err) => {
             console.error("❌ ERRO FIREBASE SNAPSHOT:", err);
-            alert("Erro ao conectar com o banco de dados. Verifique as regras do Firebase.");
+            // Se cair aqui, as chaves do Firebase na Vercel estão erradas ou faltando
+            alert("O Dashboard não conseguiu ler o banco. Verifique se as Environment Variables estão cadastradas na Vercel.");
             setLoading(false);
         });
 
