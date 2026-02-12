@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/firebase-admin';
 import { Resend } from 'resend';
+import * as admin from 'firebase-admin';
 
 const resend = new Resend(process.env.RESEND_API_KEY || 're_test_key');
 
@@ -39,13 +40,13 @@ export async function POST(req: Request) {
                 if (paymentData && paymentData.status !== 'approved') {
                     await paymentRef.update({
                         status: 'approved',
-                        paidAt: new Date()
+                        paidAt: admin.firestore.FieldValue.serverTimestamp()
                     });
 
                     // Update 'sales' too just in case it was created there
                     await db.collection('sales').doc(id).update({
                         status: 'approved',
-                        paidAt: new Date()
+                        paidAt: admin.firestore.FieldValue.serverTimestamp()
                     }).catch(() => { });
 
                     // Send access email

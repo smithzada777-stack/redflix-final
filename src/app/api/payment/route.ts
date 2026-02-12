@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
 import { db } from '@/lib/firebase-admin';
+import * as admin from 'firebase-admin';
 
 const PUSHINPAY_API = 'https://api.pushinpay.com.br/api/pix/cashIn';
 const PUSHINPAY_TOKEN = process.env.PUSHINPAY_TOKEN || process.env.PUSHINPAY_API_KEY || 'test-token';
@@ -55,7 +56,7 @@ export async function POST(req: Request) {
             whatsapp,
             planName: description,
             status: 'pending',
-            createdAt: new Date(),
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
             pixId: pixData.id,
             qrCode: pixData.qr_code_base64 || '',
             copyPaste: pixData.qr_code || ''
@@ -68,7 +69,7 @@ export async function POST(req: Request) {
             whatsapp,
             planName: description,
             status: 'pending',
-            createdAt: new Date(),
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
             pixId: pixData.id,
             qrCode: pixData.qr_code_base64 || '',
             copyPaste: pixData.qr_code || ''
