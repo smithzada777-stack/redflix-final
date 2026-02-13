@@ -70,6 +70,7 @@ export default function AdminDashboard() {
 
     // Data State
     const [leads, setLeads] = useState<Lead[]>([]);
+    const [pixPayments, setPixPayments] = useState<Lead[]>([]); // Separate state for Pix tab
     const [loading, setLoading] = useState(true);
 
     // UI State
@@ -179,14 +180,14 @@ export default function AdminDashboard() {
         setAuthChecking(false);
     }, []);
 
-    // Firebase Listener
+    // Firebase Listener for Regular Payments (Overview & Expiring tabs)
     useEffect(() => {
         if (!isAuthenticated) return;
 
-        // Consultamos a coleção 'payments', que é onde o /api/diag confirmou que os PIX estão salvos
+        // Query the 'payments' collection for regular checkout payments
         const q = query(collection(db, "payments"), orderBy("createdAt", "desc"));
         const unsubscribe = onSnapshot(q, (snapshot) => {
-            console.log("🔥 FIREBASE SNAPSHOT RECEBIDO:", snapshot.docs.length, "documentos");
+            console.log("🔥 FIREBASE SNAPSHOT RECEBIDO (Regular Payments):", snapshot.docs.length, "documentos");
 
             const data = snapshot.docs.map(doc => {
                 const d = doc.data();
@@ -209,14 +210,58 @@ export default function AdminDashboard() {
                 } as Lead;
             });
 
-            console.log("✅ DADOS PROCESSADOS:", data.length, "leads", data);
+            console.log("✅ DADOS PROCESSADOS (Regular):", data.length, "leads", data);
             setLeads(data);
             setLoading(false);
         }, (err) => {
             console.error("❌ ERRO FIREBASE SNAPSHOT:", err);
-            // Se cair aqui, as chaves do Firebase na Vercel estão erradas ou faltando
             alert("O Dashboard não conseguiu ler o banco. Verifique se as Environment Variables estão cadastradas na Vercel.");
             setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, [isAuthenticated]);
+
+    // Firebase Listener for Pix Payments (Pix tab only)
+    useEffect(() => {
+        if (!isAuthenticated) return;
+
+        // Query the 'payments' collection for Pix-generated payments
+        const q = query(collection(db, "payments"), orderBy("createdAt", "desc"));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            console.log("💰 FIREBASE SNAPSHOT RECEBIDO (Pix Payments):", snapshot.docs.length, "documentos");
+
+            // Filter only Pix payments (those with "Pix" in planName)
+            const pixData = snapshot.docs
+                .map(doc => {
+                    const d = doc.data();
+
+                    // Convert Firebase Timestamp
+                    let createdAt = d.createdAt || null;
+                    if (createdAt && typeof createdAt === 'object' && '_seconds' in createdAt) {
+                        createdAt = new Timestamp(createdAt._seconds, createdAt._nanoseconds || 0);
+                    }
+
+                    return {
+                        id: doc.id,
+                        email: d.email || d.payerEmail || 'Sem email',
+                        phone: d.whatsapp || d.phone || d.payerPhone || '',
+                        plan: d.planName || d.plan || d.description || 'Plano Registrado',
+                        price: String(d.amount || d.price || d.value || '0'),
+                        status: d.status || 'pending',
+                        createdAt
+                    } as Lead;
+                })
+                .filter(payment => {
+                    // Only include payments with "Pix" in the plan name
+                    const planName = payment.plan.toLowerCase();
+                    return planName.includes('pix') || planName.includes('anônimo') || planName.includes('manual');
+                });
+
+            console.log("✅ PIX FILTRADOS:", pixData.length, "pagamentos Pix", pixData);
+            setPixPayments(pixData);
+        }, (err) => {
+            console.error("❌ ERRO FIREBASE SNAPSHOT (Pix):", err);
         });
 
         return () => unsubscribe();
@@ -907,7 +952,7 @@ export default function AdminDashboard() {
                 )}
 
                 {activeTab === 'pix' && (
-                    <div className="p-4 md:p-8 space-y-8 max-w-5xl mx-auto">
+                    <div className="p-4 md:p-8 space-y-8 max-w-7xl mx-auto">
                         <div>
                             <h2 className="text-2xl font-black italic text-white flex items-center gap-2">
                                 <QrCode className="text-primary" />
@@ -1081,6 +1126,85 @@ export default function AdminDashboard() {
                                 </div>
                             </>
                         )}
+
+                        {/* Pix Transactions Table */}
+                        <div className="bg-[#0a0a0a] border border-white/5 rounded-2xl overflow-hidden">
+                            <div className="p-4 md:p-6 border-b border-white/5 bg-white/[0.01]">
+                                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                                    <FileText size={18} className="text-primary" />
+                                    Histórico de Transações Pix
+                                </h3>
+                                <p className="text-xs text-gray-500 mt-1">
+                                    {pixPayments.length} transação(ões) Pix gerada(s)
+                                </p>
+                            </div>
+
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left">
+                                    <thead className="bg-white/[0.02] border-b border-white/5">
+                                        <tr>
+                                            <th className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-500">#</th>
+                                            {['Cliente', 'Descrição', 'Valor', 'Data/Hora', 'Status'].map(h => (
+                                                <th key={h} className="px-6 py-4 text-[9px] font-black uppercase tracking-widest text-gray-500">{h}</th>
+                                            ))}
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-white/5 bg-black/20">
+                                        {pixPayments.length === 0 ? (
+                                            <tr>
+                                                <td colSpan={6} className="py-20 text-center">
+                                                    <div className="flex flex-col items-center gap-2 opacity-30">
+                                                        <QrCode size={40} />
+                                                        <span className="text-xs font-black uppercase tracking-widest">Nenhuma transação Pix encontrada</span>
+                                                        <p className="text-[10px] text-gray-500 max-w-[300px]">
+                                                            Use o gerador acima para criar cobranças Pix. Elas aparecerão aqui automaticamente.
+                                                        </p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ) : (
+                                            pixPayments.map((payment, index) => (
+                                                <tr key={payment.id} className="hover:bg-white/[0.02] transition-colors">
+                                                    <td className="px-6 py-4 text-[10px] font-mono text-gray-600">
+                                                        {index + 1}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div>
+                                                            <div className="text-xs font-bold text-white mb-0.5">{payment.email}</div>
+                                                            <div className="text-[10px] text-gray-500 font-mono">{payment.phone}</div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <span className="bg-primary/10 text-primary px-2 py-1 rounded text-[10px] font-bold border border-primary/20">
+                                                            {payment.plan}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-xs font-bold text-gray-300">
+                                                        {formatCurrency(parsePrice(payment.price))}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="text-[10px] text-gray-300 font-bold">
+                                                            {payment.createdAt?.toDate().toLocaleDateString('pt-BR')}
+                                                        </div>
+                                                        <div className="text-[9px] text-gray-600">
+                                                            {payment.createdAt?.toDate().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded text-[9px] font-black uppercase tracking-wider ${payment.status === 'approved' || payment.status === 'paid'
+                                                                ? 'bg-green-500/10 text-green-500'
+                                                                : 'bg-yellow-500/10 text-yellow-500'
+                                                            }`}>
+                                                            {payment.status === 'approved' || payment.status === 'paid' ? 'Pago' : 'Pendente'}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 )}
             </main>
